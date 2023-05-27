@@ -1,30 +1,29 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param } from '@nestjs/common';
 import { PersonalityQuestionService } from './personality-question.service';
-import { CreatePersonalityQuestionDto } from './dto/create-personality-question.dto';
-import { UpdatePersonalityQuestionDto } from './dto/update-personality-question.dto';
+import { PersonalityQuestion } from './entities/personality-question.entity';
+import { ApiQuestionData } from './dto/create-personality-question.dto';
 
-@Controller('personality-question')
+@Controller('personality-questions')
 export class PersonalityQuestionController {
-  
   constructor(private readonly personalityQuestionService: PersonalityQuestionService) {}
 
-  @Post()
-  create(@Body() createPersonalityQuestionDto: CreatePersonalityQuestionDto) {
-    return this.personalityQuestionService.create(createPersonalityQuestionDto);
-  }
-
   @Get()
-  findAll() {
-    return this.personalityQuestionService.findAll();
+  getAll(): Promise<PersonalityQuestion[]> {
+    return this.personalityQuestionService.getAll();
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePersonalityQuestionDto: UpdatePersonalityQuestionDto) {
-    return this.personalityQuestionService.update(+id, updatePersonalityQuestionDto);
+  @Post()
+  async create(@Body() question: ApiQuestionData[]): Promise<void> {
+    await this.personalityQuestionService.create(question);
+  }
+
+  @Put(':id')
+  update(@Param('id') id: number, @Body() question: PersonalityQuestion): Promise<PersonalityQuestion> {
+    return this.personalityQuestionService.update(id, question);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.personalityQuestionService.remove(+id);
+  delete(@Param('id') id: number): Promise<void> {
+    return this.personalityQuestionService.delete(id);
   }
 }

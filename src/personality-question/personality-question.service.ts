@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { CreatePersonalityQuestionDto } from './dto/create-personality-question.dto';
-import { UpdatePersonalityQuestionDto } from './dto/update-personality-question.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PersonalityQuestion } from './entities/personality-question.entity';
 import { Repository } from 'typeorm';
+import { PersonalityQuestion } from './entities/personality-question.entity';
+import { ApiQuestionData } from './dto/create-personality-question.dto';
+
 
 @Injectable()
 export class PersonalityQuestionService {
@@ -12,27 +12,30 @@ export class PersonalityQuestionService {
     private readonly personalityQuestionRepository: Repository<PersonalityQuestion>,
   ) {}
 
-  async create(createPersonalityQuestionDto: CreatePersonalityQuestionDto) {
-    const { question, agreeType, denialType } = createPersonalityQuestionDto;
-    const personalityQuestion = new PersonalityQuestion();
-    personalityQuestion.question = question;
-    personalityQuestion.agreeType = agreeType;
-    personalityQuestion.denialType = denialType;
-  
-    return await this.personalityQuestionRepository.save(personalityQuestion);
-  }
-  
-  
-
-  findAll() {
-    return `This action returns all personalityQuestion`;
+  async getAll(): Promise<PersonalityQuestion[]> {
+    return this.personalityQuestionRepository.find();
   }
 
-  update(id: number, updatePersonalityQuestionDto: UpdatePersonalityQuestionDto) {
-    return `This action updates a #${id} personalityQuestion`;
+  async create(questions: ApiQuestionData[]): Promise<void> {
+    const personalityQuestions: PersonalityQuestion[] = questions.map((question) => {
+      const personalityQuestion = new PersonalityQuestion();
+      personalityQuestion.question = question.question;
+      personalityQuestion.agreeType = question.agreeType;
+      personalityQuestion.denialType = question.denialType;
+      return personalityQuestion;
+    });
+  
+    await this.personalityQuestionRepository.save(personalityQuestions);
+  }
+  
+
+  async update(id: number, question: PersonalityQuestion): Promise<PersonalityQuestion> {
+    await this.personalityQuestionRepository.update(id, question);
+    return this.personalityQuestionRepository.findOne( { where: { id } });
+
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} personalityQuestion`;
+  async delete(id: number): Promise<void> {
+    await this.personalityQuestionRepository.delete(id);
   }
 }
