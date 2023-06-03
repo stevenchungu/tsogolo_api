@@ -2,7 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PersonalityQuestion } from './entities/personality-question.entity';
-import { ApiQuestionData } from './dto/create-personality-question.dto';
+import { CreatePersonalityQuestionDto } from './dto/create-personality-question.dto';
+
 
 
 @Injectable()
@@ -16,21 +17,20 @@ export class PersonalityQuestionService {
     return this.personalityQuestionRepository.find();
   }
 
-  async create(questions: ApiQuestionData[]): Promise<void> {
-    const personalityQuestions: PersonalityQuestion[] = questions.map((question) => {
+  async create(questions: CreatePersonalityQuestionDto): Promise<PersonalityQuestion> {
+    const {question, agreeType, denialType} = questions;
       const personalityQuestion = new PersonalityQuestion();
-      personalityQuestion.question = question.question;
-      personalityQuestion.agreeType = question.agreeType;
-      personalityQuestion.denialType = question.denialType;
-      return personalityQuestion;
-    });
-  
-    await this.personalityQuestionRepository.save(personalityQuestions);
+      personalityQuestion.question = question;
+      personalityQuestion.agreeType = agreeType;
+      personalityQuestion.denialType = denialType;
+
+    
+      return await  this.personalityQuestionRepository.save(personalityQuestion);
   }
   
 
-  async update(id: number, question: PersonalityQuestion): Promise<PersonalityQuestion> {
-    await this.personalityQuestionRepository.update(id, question);
+  async update(id: number, questions: PersonalityQuestion): Promise<PersonalityQuestion> {
+    await this.personalityQuestionRepository.update(id, questions);
     return this.personalityQuestionRepository.findOne( { where: { id } });
 
   }

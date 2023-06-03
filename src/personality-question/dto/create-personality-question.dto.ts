@@ -1,13 +1,6 @@
-import { IsInt, IsString } from 'class-validator';
 
-export class ApiQuestionData {
-
-  @IsString()
-  question: string;
-
-  @IsString()
+export class CreatePersonalityQuestionDto {
+  question: String;
   agreeType: string;
-
-  @IsString()
   denialType: string;
 }

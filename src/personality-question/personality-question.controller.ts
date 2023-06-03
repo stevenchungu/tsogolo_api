@@ -1,19 +1,20 @@
 import { Controller, Get, Post, Put, Delete, Body, Param } from '@nestjs/common';
 import { PersonalityQuestionService } from './personality-question.service';
 import { PersonalityQuestion } from './entities/personality-question.entity';
-import { ApiQuestionData } from './dto/create-personality-question.dto';
+import { CreatePersonalityQuestionDto } from './dto/create-personality-question.dto';
 
-@Controller('personality-questions')
+
+@Controller('personality')
 export class PersonalityQuestionController {
   constructor(private readonly personalityQuestionService: PersonalityQuestionService) {}
 
-  @Get()
+  @Get('questions')
   getAll(): Promise<PersonalityQuestion[]> {
     return this.personalityQuestionService.getAll();
   }
 
   @Post()
-  async create(@Body() question: ApiQuestionData[]): Promise<void> {
+  async create(@Body() question: CreatePersonalityQuestionDto): Promise<void> {
     await this.personalityQuestionService.create(question);
   }
 
