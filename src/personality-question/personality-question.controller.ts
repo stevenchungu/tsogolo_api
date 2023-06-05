@@ -4,11 +4,11 @@ import { PersonalityQuestion } from './entities/personality-question.entity';
 import { CreatePersonalityQuestionDto } from './dto/create-personality-question.dto';
 
 
-@Controller('personality')
+@Controller('personality-questions')
 export class PersonalityQuestionController {
   constructor(private readonly personalityQuestionService: PersonalityQuestionService) {}
 
-  @Get('questions')
+  @Get()
   getAll(): Promise<PersonalityQuestion[]> {
     return this.personalityQuestionService.getAll();
   }
