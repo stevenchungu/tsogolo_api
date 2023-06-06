@@ -6,13 +6,10 @@ import { PersonalityQuestionModule } from './personality-question/personality-qu
 @Module({
   imports: [TypeOrmModule.forRoot({
     type: 'mysql',
-    host: 'localhost',
-    port: 3306,
-    username: 'root', 
-    password: '', 
-    database: 'tsogolo',
+    url: process.env.DATABASE_URL,
+    autoLoadEntities: true,
     entities: [__dirname + '/**/*.entity{.ts,.js}'],
-    synchronize: true,
+    synchronize: false,
   }),PersonalityQuestionModule,
 ],
   
