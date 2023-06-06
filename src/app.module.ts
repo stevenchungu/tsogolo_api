@@ -14,6 +14,7 @@ import { PersonalityQuestionModule } from './personality-question/personality-qu
     autoLoadEntities: true,
     synchronize: true,
     entities: [__dirname + '/**/*.entity{.ts,.js}'],
+    driver: require('mysql2'),
   }),PersonalityQuestionModule,
 ],
   
