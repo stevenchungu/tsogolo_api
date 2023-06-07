@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ApiQuestionData } from 'src/personality-question/dto/create-personality-question.dto';
-import { PersonalityQuestion } from 'src/personality-question/entities/personality-question.entity';
 import { Repository } from 'typeorm';
 import { PersonalityQuestion } from './entities/personality-question.entity';
 import { CreatePersonalityQuestionDto } from './dto/create-personality-question.dto';
