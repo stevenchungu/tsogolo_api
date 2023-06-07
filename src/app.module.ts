@@ -6,11 +6,22 @@ import { JobListing } from './crawling/job-listing.entity';
 import { CrawlingModule } from './crawling/crawling.module';
 
 
-@Module({
-  imports: [TypeOrmModule.forRoot(config),
-    PersonalityQuestionModule,
-    CrawlingModule
 
+
+@Module({
+
+  imports: [TypeOrmModule.forRoot({
+    type: 'mysql',
+    host: process.env.DB_HOST,
+    port: parseInt(process.env.DB_PORT, 10),
+    username: process.env.DB_USERNAME,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE,
+    autoLoadEntities: false,
+    synchronize: false,
+    entities: [__dirname + '/**/*.entity{.ts,.js}'],
+    driver: require('mysql2'),
+  }), PersonalityQuestionModule, CrawlingModule
   ],
 
 })
