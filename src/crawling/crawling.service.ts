@@ -9,13 +9,12 @@ import { JobListing } from './job-listing.entity';
 @Injectable()
 export class CrawlingService {
   async crawlWebsite(): Promise<JobListing[]> {
-    const proxyUrl = 'https://tsogoloapi-production.up.railway.app/';
-    const targetUrl = 'https://www.alljobspo.com/malawi-jobs/';
-  
+    const url = 'https://tsogoloapi-production.up.railway.app/proxy';
+
     try {
-      const response = await axios.get(proxyUrl, {
+      const response = await axios.get(url, {
         params: {
-          url: targetUrl,
+          targetUrl: 'https://www.alljobspo.com/malawi-jobs/',
         },
       });
 
