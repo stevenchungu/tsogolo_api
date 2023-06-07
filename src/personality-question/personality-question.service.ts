@@ -1,16 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ApiQuestionData } from 'src/personality-question/dto/create-personality-question.dto';
+import { PersonalityQuestion } from 'src/personality-question/entities/personality-question.entity';
 import { Repository } from 'typeorm';
-import { PersonalityQuestion } from './entities/personality-question.entity';
-import { ApiQuestionData } from './dto/create-personality-question.dto';
-
 
 @Injectable()
 export class PersonalityQuestionService {
   constructor(
     @InjectRepository(PersonalityQuestion)
     private readonly personalityQuestionRepository: Repository<PersonalityQuestion>,
-  ) {}
+  ) { }
 
   async getAll(): Promise<PersonalityQuestion[]> {
     return this.personalityQuestionRepository.find();
@@ -24,14 +23,14 @@ export class PersonalityQuestionService {
       personalityQuestion.denialType = question.denialType;
       return personalityQuestion;
     });
-  
+
     await this.personalityQuestionRepository.save(personalityQuestions);
   }
-  
+
 
   async update(id: number, question: PersonalityQuestion): Promise<PersonalityQuestion> {
     await this.personalityQuestionRepository.update(id, question);
-    return this.personalityQuestionRepository.findOne( { where: { id } });
+    return this.personalityQuestionRepository.findOne({ where: { id } });
 
   }
 

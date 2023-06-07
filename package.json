@@ -9,6 +9,7 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
+    "seed:jobs": "ts-node jobSeeder.ts",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
@@ -25,9 +26,13 @@
     "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/typeorm": "^9.0.1",
+    "axios": "^1.4.0",
+    "bunyan": "^1.8.15",
+    "cheerio": "^1.0.0-rc.12",
     "class-validator": "^0.14.0",
     "mysql": "^2.18.1",
     "mysql2": "^3.3.2",
+    "puppeteer": "^20.4.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0",
     "typeorm": "^0.3.16"
@@ -54,7 +59,8 @@
     "ts-loader": "^9.2.3",
     "ts-node": "^10.0.0",
     "tsconfig-paths": "4.2.0",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "webpack": "^5.84.1"
   },
   "jest": {
     "moduleFileExtensions": [
