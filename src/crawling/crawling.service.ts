@@ -9,9 +9,9 @@ import { JobListing } from './job-listing.entity';
 @Injectable()
 export class CrawlingService {
   async crawlWebsite(): Promise<JobListing[]> {
-    const proxyUrl = 'https://tsogoloapi-production.up.railway.app/jobs'; // Replace with your actual proxy API endpoint
+    const proxyUrl = 'https://tsogoloapi-production.up.railway.app/';
     const targetUrl = 'https://www.alljobspo.com/malawi-jobs/';
-
+  
     try {
       const response = await axios.get(proxyUrl, {
         params: {
