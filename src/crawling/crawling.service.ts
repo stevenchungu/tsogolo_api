@@ -1,7 +1,7 @@
 // crawling.service.ts
 //'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36'
 import { Injectable } from '@nestjs/common';
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import cheerio from 'cheerio';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -18,8 +18,18 @@ export class CrawlingService {
     const url = 'https://www.alljobspo.com/malawi-jobs/';
     const userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36'; // Replace with the desired user agent
 
+    const headers = {
+      'User-Agent': userAgent,
+      // Add any other desired headers here
+    };
+
+    const requestOptions: AxiosRequestConfig = {
+      headers,
+      // Add any other desired request options here
+    };
+
     try {
-      const response = await axios.get(url, { headers: { 'User-Agent': userAgent } });
+      const response = await axios.get(url, requestOptions);
       const html = response.data;
       const $ = cheerio.load(html);
 
