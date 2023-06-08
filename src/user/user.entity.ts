@@ -7,11 +7,11 @@ export class User {
   id: number;
 
   @Column()
+  name: String 
+  
+  @Column({unique: true})
   email: String;
 
   @Column()
   password: String;
-
-  @Column()
-  name: String;
 }
