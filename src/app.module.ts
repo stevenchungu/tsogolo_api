@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PersonalityQuestionModule } from './personality-question/personality-question.module';
 import { CrawlingModule } from './crawling/crawling.module';
+// import { UserService } from './user/user.service';
 
 
 
@@ -21,6 +22,8 @@ import { CrawlingModule } from './crawling/crawling.module';
     driver: require('mysql2'),
   }), PersonalityQuestionModule, CrawlingModule
   ],
+
+  // providers: [UserService],
 
 })
 export class AppModule { }

@@ -8,16 +8,16 @@ import { JobListing } from './job-listing.entity';
 
 @Injectable()
 export class CrawlingService {
+  constructor(
+    @InjectRepository(JobListing)
+    private readonly jobListingRepository: Repository<JobListing>,
+  ) { }
+
   async crawlWebsite(): Promise<JobListing[]> {
-    const url = 'https://tsogoloapi-production.up.railway.app/proxy';
+    const url = 'https://www.alljobspo.com/malawi-jobs/';
 
     try {
-      const response = await axios.get(url, {
-        params: {
-          targetUrl: 'https://www.alljobspo.com/malawi-jobs/',
-        },
-      });
-
+      const response = await axios.get(url);
       const html = response.data;
       const $ = cheerio.load(html);
 
@@ -32,6 +32,9 @@ export class CrawlingService {
 
         return { title, sector, location, time, summary, id };
       }).get();
+
+      // Save the job listings to the database
+      //const savedJobListings = await this.jobListingRepository.save(jobListings);
 
       return jobListings;
     } catch (error) {
