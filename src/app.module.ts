@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PersonalityQuestionModule } from './personality-question/personality-question.module';
 import { CrawlingModule } from './crawling/crawling.module';
+import { UserModule } from './users/user.module';
 
 
 @Module({
@@ -14,13 +15,14 @@ import { CrawlingModule } from './crawling/crawling.module';
     password: '',
     database: 'tsogolo',
     autoLoadEntities: false,
-    synchronize: false,
+    synchronize: true,
     entities: [__dirname + '/**/*.entity{.ts,.js}'],
     driver: require('mysql2'),
    
   }), 
    PersonalityQuestionModule,
    CrawlingModule,
+   UserModule
  
   ],
 
