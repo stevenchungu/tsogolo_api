@@ -19,10 +19,10 @@ export class CrawlingService {
       url,
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36',
+        'Referer': 'https://www.alljobspo.com/malawi-jobs/',
         'Accept-Language': 'en-US,en;q=0.9',
         'Accept-Encoding': 'gzip, deflate, br',
         'Cookie': 'sessionid=1234567890',
-        'Referer': 'https://www.alljobspo.com/malawi-jobs/'
       },
     };
 
