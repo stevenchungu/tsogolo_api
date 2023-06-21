@@ -100,6 +100,7 @@ export class CrawlingService {
 
     //delete all jobs
     await this.jobListingRepository.clear()
+    
     // Iterate over each filtered sector and extract job listings
     const jobListings: JobListing[] = [];
     for (const sector of filteredSectors) {
@@ -110,6 +111,11 @@ export class CrawlingService {
     // Save the job listings to the database
     const savedJobListings = await this.jobListingRepository.save(jobListings);
 
+    return savedJobListings;
+  }
+
+  async saveJobListings(jobListings: JobListing[]): Promise<JobListing[]> {
+    const savedJobListings = await this.jobListingRepository.save(jobListings);
     return savedJobListings;
   }
 

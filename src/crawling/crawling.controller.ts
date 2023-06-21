@@ -1,5 +1,5 @@
 // crawling.controller.ts
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Query, Body, Post } from '@nestjs/common';
 import { CrawlingService } from './crawling.service';
 import { JobListing } from './job-listing.entity';
 
@@ -11,6 +11,12 @@ export class CrawlingController {
   async crawlWebsite(@Query('personalityType') personalityType: string): Promise<JobListing[]> {
     const jobListings = await this.crawlingService.crawlWebsite(personalityType);
     return jobListings;
+  }
+
+  @Post()
+  async saveJobListings(@Body() jobListings: JobListing[]): Promise<JobListing[]> {
+    const savedJobListings = await this.crawlingService.saveJobListings(jobListings);
+    return savedJobListings;
   }
   
 }

@@ -15,7 +15,7 @@ import { UserModule } from './users/user.module';
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE,
     autoLoadEntities: false,
-    synchronize: true,
+    synchronize: false,
     entities: [__dirname + '/**/*.entity{.ts,.js}'],
     driver: require('mysql2'),
    
