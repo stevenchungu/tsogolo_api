@@ -98,6 +98,8 @@ export class CrawlingService {
       return false; // Default case if personalityType doesn't match any mappings
     });
 
+    //delete all jobs
+    await this.jobListingRepository.clear()
     // Iterate over each filtered sector and extract job listings
     const jobListings: JobListing[] = [];
     for (const sector of filteredSectors) {
@@ -106,9 +108,9 @@ export class CrawlingService {
     }
 
     // Save the job listings to the database
-    // const savedJobListings = await this.jobListingRepository.save(jobListings);
+    const savedJobListings = await this.jobListingRepository.save(jobListings);
 
-    return jobListings;
+    return savedJobListings;
   }
 
   async extractJobListings($: CheerioAPI, url: string): Promise<JobListing[]> {
@@ -116,6 +118,10 @@ export class CrawlingService {
       url,
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36',
+        'Referer': 'https://www.alljobspo.com/malawi-jobs/',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Cookie': 'sessionid=1234567890',
       },
     };
 
