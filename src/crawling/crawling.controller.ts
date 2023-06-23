@@ -12,11 +12,5 @@ export class CrawlingController {
     const jobListings = await this.crawlingService.crawlWebsite(personalityType);
     return jobListings;
   }
-
-  @Post()
-  async saveJobListings(@Body() jobListings: JobListing[]): Promise<JobListing[]> {
-    const savedJobListings = await this.crawlingService.saveJobListings(jobListings);
-    return savedJobListings;
-  }
   
 }
