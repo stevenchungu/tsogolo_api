@@ -9,15 +9,8 @@ export class CrawlingService {
   async crawlWebsite(personalityType?: string): Promise<JobListing[]> {
     const url = 'https://www.alljobspo.com/malawi-jobs/';
 
-    const options = {
-      url,
-      headers: {
-        // 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36',
-      },
-    };
-
     const $: CheerioAPI = await new Promise((resolve, reject) => {
-      request(options, (err, resp, html) => {
+      request(url, (err, resp, html) => {
         if (!err) {
           resolve(cheerio.load(html));
         } else {
@@ -102,17 +95,12 @@ export class CrawlingService {
   }
 
   async extractJobListings($: CheerioAPI, url: string): Promise<JobListing[]> {
-    const options = {
-      url,
-      headers: {
-        // 'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36",
-      },
-    };
+  
 
     const cheerioLoad = (html: string) => cheerio.load(html);
 
     $ = await new Promise((resolve, reject) => {
-      request(options, (err, resp, html) => {
+      request(url, (err, resp, html) => {
         if (!err) {
           resolve(cheerioLoad(html));
         } else {
