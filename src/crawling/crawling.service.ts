@@ -1,113 +1,63 @@
 import { Injectable } from '@nestjs/common';
 import cheerio, { CheerioAPI } from 'cheerio';
-import * as request from 'request';
+import axios from 'axios';
 import { JobListing } from './job-listing.entity';
+import { Connection } from 'typeorm';
 
 @Injectable()
 export class CrawlingService {
- 
+  //get reference of the database
+  constructor(private connection: Connection) {}
+
+  //crawler method which use axios to send request to the website url and cheerio to palse the data
   async crawlWebsite(personalityType?: string): Promise<JobListing[]> {
     const url = 'https://www.alljobspo.com/malawi-jobs/';
+    const response = await axios.get(url);
+    const $: CheerioAPI = cheerio.load(response.data);
 
-    const $: CheerioAPI = await new Promise((resolve, reject) => {
-      request(url, (err, resp, html) => {
-        if (!err) {
-          resolve(cheerio.load(html));
-        } else {
-          reject(err);
-        }
-      });
-    });
-
-    // Extract the professional sectors from the HTML
+    // Get the professional sectors from the website
     const professionalSectors = $('#refineByRole li a').map((i, element) => {
       const sectorUrl = $(element).attr('href');
       const sectorName = $(element).text().trim();
       return { sectorName, sectorUrl };
     }).get();
 
-    // Filter the job listings based on the selected personality type
-    const filteredSectors = professionalSectors.filter(sector => {
-      // Add the appropriate logic to map personality types to sectors
-      if (personalityType === 'INTJ') {
-        return sector.sectorName === 'Accounting / Finance Jobs' || sector.sectorName === 'Computers / Telecommunication Jobs' || sector.sectorName === 'Design Jobs';
-      } else if (personalityType === 'INTP') {
-        return sector.sectorName === 'Computers / Telecommunication Jobs' || sector.sectorName === '';
-      }
-      else if (personalityType === 'INFJ') {
-        return sector.sectorName === 'Design Jobs' || sector.sectorName === 'QA / Research Jobs';
-      }
-      else if (personalityType === 'INFP') {
-        return sector.sectorName === 'Design Jobs' || sector.sectorName === 'QA / Research Jobs';
-      }
+    // Retrieve the personality-sector mappings from the database
+    const mappings = await this.getPersonalitySectorMappings(personalityType);
+    console.log('Mappings:', mappings);
 
-      else if (personalityType === 'ISTJ') {
-        return sector.sectorName === 'Accounting / Finance Jobs' || sector.sectorName === 'Administrative / Clerical Jobs' || sector.sectorName === 'Computers / Telecommunication Jobs' || sector.sectorName == 'Design Jobs';
-      }
-      else if (personalityType === 'ISTP') {
-        return sector.sectorName === 'Accounting / Finance Jobs' || sector.sectorName === 'Administrative / Clerical Jobs' || sector.sectorName === 'Computers / Telecommunication Jobs' || sector.sectorName == 'Design Jobs';
-      }
-      else if (personalityType === 'ISFJ') {
-        return sector.sectorName === 'Administrative / Clerical Jobs' || sector.sectorName === 'QA / Research Jobs';
-      }
-      else if (personalityType === 'ISFP') {
-        return sector.sectorName === 'Teaching Jobs' || sector.sectorName === 'Administrative / Clerical Jobs';
-      }
-      else if (personalityType === 'ENTJ') {
-        return sector.sectorName === 'Accounting / Finance Jobs' || sector.sectorName === 'Computers / Telecommunication Jobs';
-      }
-      else if (personalityType === 'ENTP') {
-        return sector.sectorName === 'Computers / Telecommunication Jobs' || sector.sectorName === 'QA / Research Jobs';
-      }
-      else if (personalityType === 'ENFJ') {
-        return sector.sectorName === 'Teaching Jobs' || sector.sectorName === 'QA / Research Jobs';
-      }
-      else if (personalityType === 'ENFP') {
-        return sector.sectorName === 'Design Jobs' || sector.sectorName === 'QA / Research Jobs';
-      }
-      else if (personalityType === 'ESTJ') {
-        return sector.sectorName === 'Accounting / Finance Jobs' || sector.sectorName === 'Administrative / Clerical Jobs' || sector.sectorName === 'Computers / Telecommunication Jobs';
-      }
-      else if (personalityType === 'ESTP') {
-        return sector.sectorName === 'Accounting / Finance Jobs' || sector.sectorName === 'Administrative / Clerical Jobs' || sector.sectorName === 'Computers / Telecommunication Jobs' || sector.sectorName == 'Design Jobs';
-      }
-      else if (personalityType === 'ESFJ') {
-        return sector.sectorName === 'Administrative / Clerical Jobs' || sector.sectorName === 'QA / Research Jobs';
-      }
-      else if (personalityType === 'ESFP') {
-        return sector.sectorName === 'Administrative / Clerical Jobs' || sector.sectorName === 'QA / Research Jobs';
-      }
-      // ...
-      return false; // Default case if personalityType doesn't match any mappings
-    });
+  //get sectors from website which match with the ones from database 
+  const matchedSectors = professionalSectors
+  .filter(sector => mappings.some(mapping => mapping.sector_name === sector.sectorName));
+  console.log('Matched Sectors:', matchedSectors);
 
-    // Iterate over each filtered sector and extract job listings
+   // list the jobs of the matched sectors from the website
     const jobListings: JobListing[] = [];
-    for (const sector of filteredSectors) {
+    for (const sector of matchedSectors) {
       const sectorJobListings = await this.extractJobListings($, sector.sectorUrl);
       jobListings.push(...sectorJobListings);
     }
 
-    // Save the job listings to the database
-    // const savedJobListings = await this.jobListingRepository.save(jobListings);
-
     return jobListings;
   }
+   //method to retrieve the sector with matching personality type passed as end point
+  async getPersonalitySectorMappings(personalityType: string) {
+    const query = this.connection
+      .createQueryBuilder()
+      .select('personality_type')
+      .addSelect('sector_name')
+      .from('personality_sector_mapping', 'psm')
+      .where('personality_type = :personalityType', { personalityType })
+      .getRawMany();
 
+    return query;
+  }
+
+  //extract job listings from the website
   async extractJobListings($: CheerioAPI, url: string): Promise<JobListing[]> {
-  
-
+    const response = await axios.get(url);
     const cheerioLoad = (html: string) => cheerio.load(html);
-
-    $ = await new Promise((resolve, reject) => {
-      request(url, (err, resp, html) => {
-        if (!err) {
-          resolve(cheerioLoad(html));
-        } else {
-          reject(err);
-        }
-      });
-    });
+    $ = cheerioLoad(response.data);
 
     // Select the job listings container and iterate over each job listing
     const jobListings = $('article.job').map((i, element) => {
@@ -117,7 +67,7 @@ export class CrawlingService {
       const time = $(element).find('.attribute.location span.value:nth-child(3)').text().trim();
       const summary = $(element).find('.summary p').text().trim();
       const id = i;
-      
+
       return { title, sector, location, time, summary, id };
     }).get();
 
