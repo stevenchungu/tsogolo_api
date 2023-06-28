@@ -28,7 +28,7 @@ export class CrawlingService {
 
   //get sectors from website which match with the ones from database 
   const matchedSectors = professionalSectors
-  .filter(sector => mappings.some(mapping => mapping.sector_name === sector.sectorName));
+  .filter(sector => mappings.some(mapping => mapping.sectorName === sector.sectorName));
   console.log('Matched Sectors:', matchedSectors);
 
    // list the jobs of the matched sectors from the website
@@ -44,10 +44,10 @@ export class CrawlingService {
   async getPersonalitySectorMappings(personalityType: string) {
     const query = this.connection
       .createQueryBuilder()
-      .select('personality_type')
-      .addSelect('sector_name')
+      .select('personalityType')
+      .addSelect('sectorName')
       .from('personality_sector_mapping', 'psm')
-      .where('personality_type = :personalityType', { personalityType })
+      .where('personalityType = :personalityType', { personalityType })
       .getRawMany();
 
     return query;
