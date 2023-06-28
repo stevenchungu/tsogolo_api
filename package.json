@@ -43,6 +43,7 @@
     "mysql2": "^3.3.2",
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",
+    "proxy-chain": "^2.3.0",
     "puppeteer": "^20.4.0",
     "reflect-metadata": "^0.1.13",
     "request": "^2.88.2",

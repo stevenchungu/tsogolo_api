@@ -13,11 +13,9 @@ export class CrawlingService {
   //crawler method which use axios to send request to the website url and cheerio to palse the data
   async crawlWebsite(personalityType?: string): Promise<JobListing[]> {
     const url = 'https://www.alljobspo.com/malawi-jobs/';
-    const headers = {
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-    };
+   
     
-    const response = await axios.get(url, {headers});
+    const response = await axios.get(url);
     const $: CheerioAPI = cheerio.load(response.data);
 
     // Get the professional sectors from the website
@@ -62,7 +60,10 @@ export class CrawlingService {
 
   //extract job listings from the website
   async extractJobListings($: CheerioAPI, url: string): Promise<JobListing[]> {
-    const response = await axios.get(url);
+    const headers = {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+    };  
+    const response = await axios.get(url, {headers});
     const cheerioLoad = (html: string) => cheerio.load(html);
     $ = cheerioLoad(response.data);
 
