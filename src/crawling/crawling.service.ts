@@ -3,6 +3,7 @@ import cheerio, { CheerioAPI } from 'cheerio';
 import axios from 'axios';
 import { JobListing } from './job-listing.entity';
 import { Connection } from 'typeorm';
+import { resolve } from 'path';
 
 @Injectable()
 export class CrawlingService {
@@ -12,7 +13,11 @@ export class CrawlingService {
   //crawler method which use axios to send request to the website url and cheerio to palse the data
   async crawlWebsite(personalityType?: string): Promise<JobListing[]> {
     const url = 'https://www.alljobspo.com/malawi-jobs/';
-    const response = await axios.get(url);
+    const headers = {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+    };
+    
+    const response = await axios.get(url, {headers});
     const $: CheerioAPI = cheerio.load(response.data);
 
     // Get the professional sectors from the website
@@ -34,6 +39,8 @@ export class CrawlingService {
    // list the jobs of the matched sectors from the website
     const jobListings: JobListing[] = [];
     for (const sector of matchedSectors) {
+      //set time delay for 2 seconds
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       const sectorJobListings = await this.extractJobListings($, sector.sectorUrl);
       jobListings.push(...sectorJobListings);
     }
