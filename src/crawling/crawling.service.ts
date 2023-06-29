@@ -84,8 +84,10 @@ export class CrawlingService {
       const time = $(element).find('.attribute.location span.value:nth-child(3)').text().trim();
       const summary = $(element).find('.summary p').text().trim();
       const id = i;
+ // Extract the link
+     const link = $(element).find('.go').attr('href');
 
-      return { title, sector, location, time, summary, id };
+     return { title, sector, location, time, summary, id, link };
     }).get();
 
     return jobListings;
