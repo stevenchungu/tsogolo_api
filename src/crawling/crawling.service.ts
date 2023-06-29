@@ -31,17 +31,26 @@ export class CrawlingService {
 
   //get sectors from website which match with the ones from database 
   const matchedSectors = professionalSectors
-  .filter(sector => mappings.some(mapping => mapping.sectorName === sector.sectorName));
+  .filter(sector => mappings.some(mapping => mapping.sector_name === sector.sectorName));
   console.log('Matched Sectors:', matchedSectors);
 
    // list the jobs of the matched sectors from the website
-    const jobListings: JobListing[] = [];
-    for (const sector of matchedSectors) {
-      //set time delay for 2 seconds
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+    // const jobListings: JobListing[] = [];
+    // for (const sector of matchedSectors) {
+    //   //set time delay for 2 seconds
+    //   await new Promise((resolve) => setTimeout(resolve, 5000));
+    //   const sectorJobListings = await this.extractJobListings($, sector.sectorUrl);
+    //   jobListings.push(...sectorJobListings);
+    // }
+
+     // Execute requests for job listings concurrently
+  const jobListings: JobListing[] = [];
+  await Promise.all(
+    matchedSectors.map(async sector => {
       const sectorJobListings = await this.extractJobListings($, sector.sectorUrl);
       jobListings.push(...sectorJobListings);
-    }
+    })
+  );
 
     return jobListings;
   }
@@ -49,10 +58,10 @@ export class CrawlingService {
   async getPersonalitySectorMappings(personalityType: string) {
     const query = this.connection
       .createQueryBuilder()
-      .select('personalityType')
-      .addSelect('sectorName')
+      .select('personality_type')
+      .addSelect('sector_name')
       .from('personality_sector_mapping', 'psm')
-      .where('personalityType = :personalityType', { personalityType })
+      .where('personality_type = :personalityType', { personalityType })
       .getRawMany();
 
     return query;
