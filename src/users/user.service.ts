@@ -32,4 +32,13 @@ export class UserService {
   async getAllUsers(): Promise<User[]> {
     return await this.userRepository.find();
   }
+
+  async updateUser(id: number, userDTO: UserDTO): Promise<UserDTO> {
+    await this.userRepository.update(id, userDTO);
+    const updatedUser = await this.userRepository.findOne({where: {id}});
+    return updatedUser;
+  }
+async deleteUser(id:number) : Promise<void> {
+  await this.userRepository.delete(id)
+}
 }
